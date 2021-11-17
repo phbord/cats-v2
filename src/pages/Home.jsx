@@ -20,26 +20,29 @@ const Home = () => {
   const [imagesMin, setImagesMin] = useState(0);
   const [imagesMax, setImagesMax] = useState(2);
   const [isClicked, setIsClicked] = useState(false);
+  const [count, setCount] = useState(0);
 
   useEffect(async () => {
     setImages(await fetchAPI());
-  }, []);
+    setCount(count + 2);
+
+    if (count === images?.data?.length) {
+      history.push('/scores');
+    }
+  }, [imagesMin]);
 
   useEffect(() => {
-    setIsClicked(false);
-    setImagesMin(0);
-    setImagesMax(2);
   }, [])
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     const imgId = Number(e.target.nextSibling.alt);
+    let count = 0;
 
     //modifyOneScore(imgId, newScore);
 
     setIsClicked(true);
     setImagesMin(imagesMin + 2);
     setImagesMax(imagesMax + 2);
-    console.log(imagesMin,'==>',imagesMax,'==>',isClicked);
   };
 
   
@@ -51,14 +54,8 @@ const Home = () => {
       </h1>
       <ul className='row'>{
         images && images?.data?.map((image, index) => (isClicked === false || imagesMin <= index) && (index < imagesMax) && (
-          (index === images.data.length) && (
-            // setIsClicked(false),
-            // setImagesMin(0),
-            // setImagesMax(2),
-            history.push('/scores')
-          ),
           <li key={uuid_v4()} 
-              className='col-xs-12 col-sm-6'><p>{images.data.length} / {index}</p>
+              className='col-xs-12 col-sm-6'>
             <CardToSelectComponent image={image} index={index} handleClick={handleClick}/>
           </li>
         ))
